@@ -11,7 +11,7 @@ public class UserNote extends PanacheMongoEntity {
     public List<Note> notes;
 
     public static UserNote findByUserId(String userId) {
-        return find("userId like ?1t", "%" + userId + "%").firstResult();
+        return find("userId like ?1", "%" + userId + "%").firstResult();
     }
 
     @Override

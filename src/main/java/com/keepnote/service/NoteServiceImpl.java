@@ -6,6 +6,8 @@ import com.keepnote.model.UserNote;
 import javax.enterprise.context.Dependent;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Dependent
@@ -19,15 +21,25 @@ public class NoteServiceImpl implements NoteService {
     public Boolean createNote(Note note) {
         boolean createdStatus = false;
         UserNote userNote = null;
+        List<Note> notes = null;
         if (note != null) {
             userNote = this.getUserNoteObject(note.getCreatedBy());
             if (userNote != null && userNote.notes != null) {
                 note.setNoteId(UUID.randomUUID().toString());
                 note.setCreatedOn(LocalDateTime.now());
                 userNote.notes.add(note);
-                userNote.persist();
-                createdStatus = true;
+            } else {
+                userNote = new UserNote();
+                notes = new ArrayList<>();
+                note.setNoteId(UUID.randomUUID().toString());
+                note.setCreatedOn(LocalDateTime.now());
+                notes.add(note);
+                userNote.userId = note.getCreatedBy();
+                userNote.notes = notes;
+
             }
+            userNote.persist();
+            createdStatus = true;
         }
         return createdStatus;
     }
